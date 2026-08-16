@@ -1,9 +1,11 @@
 package database
 
 import (
+	"book-management-api/models"
 	"fmt"
 	"os"
 
+	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -12,6 +14,11 @@ var DB *gorm.DB
 
 func ConnectToDatabase() {
 	defer registerTable()
+
+	if err := godotenv.Load(".env"); err != nil {
+		fmt.Println("Failed to load dotenv!")
+	}
+
 	var (
 		host     = os.Getenv("DB_HOST")
 		user     = os.Getenv("DB_USER")
@@ -29,5 +36,5 @@ func ConnectToDatabase() {
 }
 
 func registerTable() {
-	DB.AutoMigrate()
+	DB.AutoMigrate(&models.Book{}, &models.Category{})
 }
