@@ -11,7 +11,7 @@ import (
 func GetBooks(c *gin.Context) {
 	var books []models.Book
 
-	if err := database.DB.Find(&books).Error; err != nil {
+	if err := database.DB.Preload("Category").Find(&books).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "buku tidak tersedia",
 		})
@@ -27,7 +27,7 @@ func GetBookByID(c *gin.Context) {
 	bookId := c.Param("id")
 	var book models.Book
 
-	if err := database.DB.First(&book, bookId).Error; err != nil {
+	if err := database.DB.Preload("Category").First(&book, bookId).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "Buku tidak ditemukan",
 		})
@@ -86,7 +86,7 @@ func EditBook(c *gin.Context) {
 		CategoryID:  newBookData.CategoryID,
 	})
 
-	database.DB.First(&books, bookId)
+	database.DB.Preload("Category").First(&books, bookId)
 	c.JSON(http.StatusCreated, gin.H{
 		"data": books,
 	})
